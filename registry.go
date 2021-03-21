@@ -127,7 +127,7 @@ func join() {
 
 	go func() {
 		s := grpc.NewServer()
-		lis, err := net.Listen("tcp", ":50052")
+		lis, err := net.Listen("tcp", ":50053")
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
@@ -138,7 +138,7 @@ func join() {
 	}()
 
 	// time.Sleep(time.Second * 100)
-	if err := r.processor.run(ctx, ":50051", ":50052"); err != nil {
+	if err := r.processor.run(ctx, ":50051", ":50053"); err != nil {
 		panic(err)
 	}
 }

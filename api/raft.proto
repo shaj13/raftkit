@@ -57,3 +57,9 @@ enum MemberType {
 message MessageRequest {
 	raftpb.Message message = 1;
 }
+
+message SnapHeader {
+	int64 metadata = 1; 
+	int64 pool = 2; 
+	int64 appData = 3; 
+}
