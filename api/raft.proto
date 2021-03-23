@@ -69,3 +69,8 @@ message Chunk {
 	// Data specifies the raw chunk data.
 	bytes  data  = 2 ;
 }
+
+message SnapshotHeader {
+	// CRC specifies the snapshot crc sum.
+	bytes  CRC  = 1;
+}
