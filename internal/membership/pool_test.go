@@ -75,7 +75,7 @@ func TestPoolRestore(t *testing.T) {
 	for id := range ids {
 		_, ok := p.Get(id)
 		if !ok {
-			t.Errorf("pool have'nt add member %x during the restore", id)
+			t.Errorf("pool have'nt add member %d during the restore", id)
 		}
 	}
 }

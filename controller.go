@@ -80,7 +80,7 @@ func (r *router) get(gid uint64) (transport.Controller, error) {
 	defer r.mu.Unlock()
 	ctrl, ok := r.ctrls[gid]
 	if !ok {
-		return nil, fmt.Errorf("raft: unknown group id %x", gid)
+		return nil, fmt.Errorf("raft: unknown group id %d", gid)
 	}
 	return ctrl, nil
 }

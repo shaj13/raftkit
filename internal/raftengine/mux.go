@@ -92,12 +92,12 @@ func (m *mux) Start() {
 				if n.lead != st.Lead {
 					if st.Lead != 0 {
 						if n.lead == 0 {
-							n.cfg.Logger.Infof("raft.node: %x elected leader %x at term %d", st.ID, st.Lead, st.Term)
+							n.cfg.Logger.Infof("raft.node: %d elected leader %d at term %d", st.ID, st.Lead, st.Term)
 						} else {
-							n.cfg.Logger.Infof("raft.node: %x changed  leader from %x to %x at term %d", st.ID, n.lead, st.Lead, st.Term)
+							n.cfg.Logger.Infof("raft.node: %d changed  leader from %d to %d at term %d", st.ID, n.lead, st.Lead, st.Term)
 						}
 					} else {
-						n.cfg.Logger.Infof("raft.node: %x lost leader %x at term %d", st.ID, n.lead, st.Term)
+						n.cfg.Logger.Infof("raft.node: %d lost leader %d at term %d", st.ID, n.lead, st.Term)
 					}
 					n.lead = st.Lead
 				}
@@ -116,7 +116,7 @@ func (m *mux) Start() {
 		case op := <-m.operationc:
 			node = nodes[op.gid]
 			if node == nil && op.ot != add {
-				raftlog.Warningf("raft: unknown group %x", op.gid)
+				raftlog.Warningf("raft: unknown group %d", op.gid)
 				close(op.done)
 				continue
 			}
@@ -560,7 +560,7 @@ func (h *heartbeats) fanout(nodes map[uint64]*nodeState, msg etcdraftpb.Message)
 	}
 
 	if node == nil {
-		raftlog.Warningf("raft: ignored heartbeat from unknown member %x", msg.From)
+		raftlog.Warningf("raft: ignored heartbeat from unknown member %d", msg.From)
 		return
 	}
 

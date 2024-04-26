@@ -271,7 +271,7 @@ func (eng *engine) TransferLeadership(ctx context.Context, transferee uint64) er
 	eng.propwg.Add(1)
 	defer eng.propwg.Done()
 
-	eng.logger.Infof("raft.engine: start transfer leadership %x -> %x", eng.node.Status().Lead, transferee)
+	eng.logger.Infof("raft.engine: start transfer leadership %d -> %d", eng.node.Status().Lead, transferee)
 
 	eng.node.TransferLeadership(ctx, eng.node.Status().Lead, transferee)
 	ticker := time.NewTicker(eng.cfg.TickInterval() / 10)
@@ -592,7 +592,7 @@ func (eng *engine) publishConfChange(ent etcdraftpb.Entry) {
 			// to make sure the commit ack sent before closing connection.
 			case <-time.After(eng.cfg.TickInterval() * 2):
 				if err := eng.pool.Remove(mem); err != nil {
-					eng.logger.Errorf("raft.engine: removing member %x: %v", mem.ID, err)
+					eng.logger.Errorf("raft.engine: removing member %d: %v", mem.ID, err)
 				}
 			case <-eng.ctx.Done():
 				return
@@ -625,7 +625,7 @@ func (eng *engine) process(c chan etcdraftpb.Message) {
 func (eng *engine) send(msgs []etcdraftpb.Message) {
 	lg := func(m etcdraftpb.Message, str string) {
 		eng.logger.Warningf(
-			"raft.engine: sending message %s to member %x: %v",
+			"raft.engine: sending message %s to member %d: %v",
 			m.Type,
 			m.To,
 			str,
@@ -694,11 +694,11 @@ func (eng *engine) promotions() {
 	}
 
 	for _, m := range promotions {
-		eng.logger.Infof("raft.engine: promoting staging member %x", m.ID)
+		eng.logger.Infof("raft.engine: promoting staging member %d", m.ID)
 		ctx, cancel := context.WithTimeout(eng.ctx, eng.cfg.TickInterval()*5)
 		_, err := eng.proposeConfChange(ctx, &m, etcdraftpb.ConfChangeAddNode)
 		if err != nil {
-			eng.logger.Warningf("raft.engine: promoting staging member %x: %v", m.ID, err)
+			eng.logger.Warningf("raft.engine: promoting staging member %d: %v", m.ID, err)
 		}
 		cancel()
 	}
@@ -735,7 +735,7 @@ func (eng *engine) forceSnapshot(msg etcdraftpb.Message) bool {
 		return false
 	}
 
-	eng.logger.V(1).Infof("raft.engine: force new snapshot %x it is not in the ConfState", msg.To)
+	eng.logger.V(1).Infof("raft.engine: force new snapshot %d it is not in the ConfState", msg.To)
 
 	// report snapshot failure, to re-send the new snapshot.
 	defer eng.ReportSnapshot(msg.To, raft.SnapshotFailure)

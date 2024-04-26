@@ -98,7 +98,7 @@ func (p *pool) Update(m raftpb.Member) error {
 func (p *pool) Remove(m raftpb.Member) error {
 	mem, ok := p.Get(m.ID)
 	if !ok {
-		return fmt.Errorf("raft/membership: member %x not found", m.ID)
+		return fmt.Errorf("raft/membership: member %d not found", m.ID)
 	}
 
 	if mem.Type() == m.Type {
@@ -109,7 +109,7 @@ func (p *pool) Remove(m raftpb.Member) error {
 	defer p.mu.Unlock()
 
 	if err := mem.Close(); err != nil {
-		p.logger.Warningf("raft.membership: closing member %x: %v", m.ID, err)
+		p.logger.Warningf("raft.membership: closing member %d: %v", m.ID, err)
 	}
 
 	mem, err := p.newMember(m)
@@ -134,7 +134,7 @@ func (p *pool) Snapshot() []raftpb.Member {
 func (p *pool) Restore(membs []raftpb.Member) {
 	for _, m := range membs {
 		if err := p.Add(m); err != nil {
-			p.logger.Errorf("raft.membership: adding member %x: %v", m.ID, err)
+			p.logger.Errorf("raft.membership: adding member %d: %v", m.ID, err)
 		}
 	}
 }

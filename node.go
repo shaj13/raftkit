@@ -570,7 +570,7 @@ func (n *Node) promoteMember(ctx context.Context, id uint64, forwarded bool) err
 			return err
 		}
 
-		n.cfg.logger.V(3).Infof("raft.node: forwarding member %x promotion to %x", id, lmem.ID())
+		n.cfg.logger.V(3).Infof("raft.node: forwarding member %d promotion to %d", id, lmem.ID())
 		return client.PromoteMember(ctx, raw)
 	}
 
@@ -578,7 +578,7 @@ func (n *Node) promoteMember(ctx context.Context, id uint64, forwarded bool) err
 	learner := rs.Progress[id].Match
 	// the learner's Match not caught up with the leader yet.
 	if float64(learner) < float64(leader)*0.9 {
-		return fmt.Errorf("raft: promotion failed, memebr %x not synced with the leader yet", id)
+		return fmt.Errorf("raft: promotion failed, memebr %d not synced with the leader yet", id)
 	}
 
 	(&raw).Type = VoterMember
@@ -615,7 +615,7 @@ func available() func(c *Node) error {
 func notMember(id uint64) func(c *Node) error {
 	return func(c *Node) error {
 		if _, ok := c.GetMemebr(id); !ok {
-			return fmt.Errorf("raft: unknown member %x", id)
+			return fmt.Errorf("raft: unknown member %d", id)
 		}
 		return nil
 	}
@@ -625,7 +625,7 @@ func memberRemoved(id uint64) func(c *Node) error {
 	return func(c *Node) error {
 		m, ok := c.GetMemebr(id)
 		if ok && m.Type() == RemovedMember {
-			return fmt.Errorf("raft: member %x removed", id)
+			return fmt.Errorf("raft: member %d removed", id)
 		}
 		return nil
 	}
@@ -638,7 +638,7 @@ func addressInUse(mid uint64, addr string) func(c *Node) error {
 		})
 
 		if len(membs) > 0 {
-			return fmt.Errorf("raft: address used by member %x", membs[0].ID())
+			return fmt.Errorf("raft: address used by member %d", membs[0].ID())
 		}
 
 		return nil
@@ -657,7 +657,7 @@ func notLeader() func(c *Node) error {
 func leader(id uint64) func(c *Node) error {
 	return func(c *Node) error {
 		if id == c.Leader() {
-			return fmt.Errorf("raft: operation not permitted, member %x is the leader, transfer leadership first", id)
+			return fmt.Errorf("raft: operation not permitted, member %d is the leader, transfer leadership first", id)
 		}
 		return nil
 	}
@@ -666,7 +666,7 @@ func leader(id uint64) func(c *Node) error {
 func idInUse(id uint64) func(c *Node) error {
 	return func(c *Node) error {
 		if _, ok := c.GetMemebr(id); ok {
-			return fmt.Errorf("raft: id used by member %x", id)
+			return fmt.Errorf("raft: id used by member %d", id)
 		}
 		return nil
 	}
@@ -695,7 +695,7 @@ func notType(id uint64, t MemberType) func(c *Node) error {
 	return func(c *Node) error {
 		mem, _ := c.GetMemebr(id)
 		if mt := mem.Type(); mt != t {
-			return fmt.Errorf("raft: memebr (%x) is a %s not a %s", id, mt, t)
+			return fmt.Errorf("raft: memebr (%d) is a %s not a %s", id, mt, t)
 		}
 		return nil
 	}

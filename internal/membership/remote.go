@@ -45,7 +45,7 @@ func newRemote(cfg Config, m raftpb.Member) (Member, error) {
 	r.raw.Store(m)
 
 	cfg.Logger().V(5).Infof(
-		"raft.membership: setup pipelining for remote member %x [pipelines: %d, PipelineBufSize: %d]",
+		"raft.membership: setup pipelining for remote member %d [pipelines: %d, PipelineBufSize: %d]",
 		m.ID,
 		connPerPipeline,
 		pipelineBufSize,
@@ -103,7 +103,7 @@ func (r *remote) Send(msg etcdraftpb.Message) (err error) {
 	case <-r.ctx.Done():
 		return r.ctx.Err()
 	default:
-		return fmt.Errorf("cluster member %x, buffer is full (overloaded network)", r.ID())
+		return fmt.Errorf("cluster member %d, buffer is full (overloaded network)", r.ID())
 	}
 
 	return
@@ -210,9 +210,9 @@ func (r *remote) process(ctx context.Context) {
 		rpc := r.client()
 		err := rpc.Message(ctx, msg)
 		if err != nil && !errors.Is(err, perr) || err != nil && r.logger.V(3).Enabled() {
-			r.logger.Errorf("raft.membership: sending message to member %x: %v", r.ID(), err)
+			r.logger.Errorf("raft.membership: sending message to member %d: %v", r.ID(), err)
 		} else if err == nil && perr != nil {
-			r.logger.Infof("raft.membership: sending message to member %x succeed", r.ID())
+			r.logger.Infof("raft.membership: sending message to member %d succeed", r.ID())
 		}
 		perr = err
 		r.report(msg, err)
