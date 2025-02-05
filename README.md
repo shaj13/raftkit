@@ -227,7 +227,7 @@ node := raft.NewNode(<FSM>, <Transport>, <Opts>)
 node.Start(raft.WithRestore("<path to snapshot file>"))
 ```
 
-## Examples and dcos 
+## Examples and docs
  - More detailed development documentation can be found in [go docs](https://pkg.go.dev/github.com/shaj13/raft)
  - Fully working single and multiraft cluster example can be found in [Examples Folder](./_examples).
 
